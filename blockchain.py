@@ -2,6 +2,7 @@ import hashlib
 import Crypto
 from Crypto.PublicKey import RSA
 from Crypto.Signature import pkcs1_15
+from Crypto import Random
 import datetime
 
 class Block:
@@ -51,11 +52,18 @@ class Blockchain:
         return self.chain[-1]
     
     def create_genesis(self):
-        genesis_block =  Block(0, 0, ["Genesis"], 0)
+        genesis_block =  Block(0, 0, ["Genesis"], self.reward)
         self.chain.append(genesis_block)
     
     def mine(self):
         block = Block(self.last_block().hash, len(self.chain), self.current_data, self.reward)
         self.chain.append(block)
         self.current_data = []
+
+class User:
+    def __init__(self):
+        random = Random.new().read
+        self.private_key = RSA.generate(1024, random)
+        self.public_key = self.private_key.publickey()
+    
 
